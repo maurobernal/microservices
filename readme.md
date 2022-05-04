@@ -5,5 +5,5 @@ docker compose up
 docker build -t maurobernal/microservices-api .\api\
 
 
-![alt text](http://url/to/img.png)
+![Diagrama](https://github.com/maurobernal/microservices/blob/main/esquema.png)
 
