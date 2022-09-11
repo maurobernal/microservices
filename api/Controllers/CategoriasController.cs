@@ -67,6 +67,8 @@ public class CategoriasController : Controller
     {
         var res = await _context.Categorias.Where(w => w.ID == Id).AsNoTracking().FirstOrDefaultAsync();
         if (res == null) return NotFound();
+        
+        
         TypeAdapterConfig<Categorias, CategoriaModels>
         .NewConfig()
         .Map(d => d.campoDescripcion, o => o.Descripcion)

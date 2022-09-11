@@ -1,7 +1,7 @@
 using api.Interfaces;
 using api.Context;
 using Microsoft.EntityFrameworkCore;
-
+using Serilog;
 
 /* ========= Servicios e Inyecciones  ==================== */
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +17,15 @@ builder.Services.AddTransient<IAppDBContext, AppDBContext>();
 builder.Services.AddDbContext<AppDBContext>(o => o.UseSqlServer("Server=127.0.0.1,14333;Database=API;user id=sa;password=M1sterPassw0rd!;"));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Host.UseSerilog((ctx, lc) =>
+lc
+    .WriteTo.Console()
+    .WriteTo.Seq("http://127.0.0.1:5341")
+
+
+    ); ;
+
 
 
 
