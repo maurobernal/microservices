@@ -2,6 +2,8 @@ using api.Interfaces;
 using api.Context;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 /* ========= Servicios e Inyecciones  ==================== */
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IAppDBContext, AppDBContext>();
-builder.Services.AddDbContext<AppDBContext>(o => o.UseSqlServer("Server=172.0.0.161,14334;Database=API;user id=sa;password=M1sterPassw0rd!;"));
+builder.Services.AddDbContext<AppDBContext>(o => o.UseSqlServer("Server=172.0.0.161,14334;Database=API;user id=sa;password=M1sterPassw0rd!;Encrypt=true;TrustServerCertificate=true"));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -27,7 +29,31 @@ lc
     ); ;
 
 
+//Rate limiting
+builder.Services.AddRateLimiter(delegate(RateLimiterOptions options){
+    options.AddFixedWindowLimiter("FixedWindows", delegate (FixedWindowRateLimiterOptions options)
+    {
+        options.QueueLimit = 2;
+        options.PermitLimit = 4;
+        options.Window = TimeSpan.FromSeconds(30);
 
+
+    });
+
+    options.AddSlidingWindowLimiter("SliderWindows", delegate( SlidingWindowRateLimiterOptions options) 
+    { 
+        options.QueueLimit = 2;
+        options.PermitLimit = 4;
+        options.Window = TimeSpan.FromSeconds(30);
+        options.SegmentsPerWindow = 2;
+    });
+
+    options.AddConcurrencyLimiter("Concurrency", delegate (ConcurrencyLimiterOptions options) 
+    {
+        options.PermitLimit = 1;
+        options.QueueLimit = 1;
+    });
+});
 
 Console.WriteLine("******************Finalizado la configuración de servicios *******************");
 /* ========= Construir el sitio ======================== */
@@ -38,7 +64,7 @@ var app = builder.Build();
     app.UseSwagger();
     app.UseSwaggerUI();
 
-
+app.UseRateLimiter();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

@@ -6,12 +6,14 @@ using api.Interfaces;
 using api.Models;
 using AutoMapper;
 using Mapster;
-
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.Tasks;
 namespace api.Controllers;
 
 
 [ApiController]
 [Route("[controller]")]
+[EnableRateLimiting("Concurrency")]
 public class CategoriasController : Controller
 {
     private IAppDBContext _context;
@@ -33,7 +35,8 @@ public class CategoriasController : Controller
     {
         var res = await _context.Categorias.Where(w => w.Habilitado == true).ToListAsync();
         if (res == null) return NotFound();
-
+        var t = Task.Run(() => Console.WriteLine());
+        t.Wait(TimeSpan.FromSeconds(20));
         //_mapper.Map<Ca<(res)
         //List<CategoriaModels> C = new();
         
