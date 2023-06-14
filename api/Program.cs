@@ -53,6 +53,12 @@ builder.Services.AddRateLimiter(delegate(RateLimiterOptions options){
         options.PermitLimit = 1;
         options.QueueLimit = 1;
     });
+
+    options.OnRejected = delegate (OnRejectedContext context, CancellationToken cancellation)
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        return new ValueTask();
+    };
 });
 
 Console.WriteLine("******************Finalizado la configuración de servicios *******************");

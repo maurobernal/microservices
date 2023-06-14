@@ -35,11 +35,7 @@ public class CategoriasController : Controller
     {
         var res = await _context.Categorias.Where(w => w.Habilitado == true).ToListAsync();
         if (res == null) return NotFound();
-        var t = Task.Run(() => Console.WriteLine());
-        t.Wait(TimeSpan.FromSeconds(20));
-        //_mapper.Map<Ca<(res)
-        //List<CategoriaModels> C = new();
-        
+        System.Threading.Thread.Sleep(15000);
         return Ok(res);
     }
 
