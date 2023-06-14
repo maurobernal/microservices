@@ -15,8 +15,8 @@ public class AppDBContext : DbContext, IAppDBContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(
-            @"Server=206.189.253.20,14333;Database=API;user id=sa;password=Global2020!;");
+        //optionsBuilder.UseSqlServer(
+        //    @"Server=206.189.253.20,14333;Database=API;user id=sa;password=Global2020!;");
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))

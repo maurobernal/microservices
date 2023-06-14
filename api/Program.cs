@@ -14,7 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IAppDBContext, AppDBContext>();
-builder.Services.AddDbContext<AppDBContext>(o => o.UseSqlServer("Server=127.0.0.1,14333;Database=API;user id=sa;password=M1sterPassw0rd!;"));
+builder.Services.AddDbContext<AppDBContext>(o => o.UseSqlServer("Server=172.0.0.161,14334;Database=API;user id=sa;password=M1sterPassw0rd!;"));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
