@@ -89,3 +89,5 @@ C:\Users\NyM\source\repos\maurobernal\microservices\api\bin\Debug\net7.0\Microso
 C:\Users\NyM\source\repos\maurobernal\microservices\api\bin\Debug\net7.0\Mono.TextTemplating.dll
 C:\Users\NyM\source\repos\maurobernal\microservices\api\bin\Debug\net7.0\System.CodeDom.dll
 C:\Users\NyM\source\repos\maurobernal\microservices\api\bin\Debug\net7.0\System.Memory.Data.dll
+C:\Users\NyM\source\repos\maurobernal\microservices\api\bin\Debug\net7.0\Pipelines.Sockets.Unofficial.dll
+C:\Users\NyM\source\repos\maurobernal\microservices\api\bin\Debug\net7.0\StackExchange.Redis.dll

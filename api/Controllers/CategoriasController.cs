@@ -16,13 +16,15 @@ namespace api.Controllers;
 [EnableRateLimiting("Concurrency")]
 public class CategoriasController : Controller
 {
-    private IAppDBContext _context;
-    private IMapper _mapper;
+    private readonly IAppDBContext _context;
+    private readonly ICacheService _cache;
+    private readonly IMapper _mapper;
 
-    public CategoriasController(IMapper mapper, IAppDBContext context)
+    public CategoriasController(IMapper mapper, IAppDBContext context, ICacheService cache)
     {
         _mapper = mapper;
         _context = context;
+        _cache = cache;
     }
     
     
@@ -33,9 +35,12 @@ public class CategoriasController : Controller
     [HttpGet()]
     public async Task<IActionResult> GetAll()
     {
+        var res_cache = await _cache.GetDataAsync<List<Categorias>>("Categorias");
+        if (res_cache != null) return Ok(res_cache);
+
         var res = await _context.Categorias.Where(w => w.Habilitado == true).ToListAsync();
         if (res == null) return NotFound();
-        System.Threading.Thread.Sleep(15000);
+        await _cache.SetDataAsync<List<Categorias>>("Categorias", res);
         return Ok(res);
     }
 
@@ -48,14 +53,14 @@ public class CategoriasController : Controller
 
     [HttpGet("{Id}")]
     public async Task<IActionResult> Get(Guid Id) {
+
+        var res_cache = await _cache.GetDataAsync<Categorias>($"Categoria:{Id}");
+        if (res_cache != null) return Ok(res_cache);
+
         var res = await _context.Categorias.Where(w => w.ID == Id).AsNoTracking().FirstOrDefaultAsync();
-
-        
         if (res == null) return NotFound();
-
+        await _cache.SetDataAsync<Categorias>($"Categoria:{Id}", res);
         CategoriaModels C = _mapper.Map<CategoriaModels>(res);
-
-      
         
         return Ok(C);
     }
@@ -106,12 +111,15 @@ public class CategoriasController : Controller
 
         _context.Categorias.Add(category);
         await _context.SaveChangesAsync();
+
+        await _cache.DeleteDataAsync<List<Categorias>>("Categorias");
         return Ok(category);
     }
 
     [HttpPut("{Id}")]
     public async Task<IActionResult> Put(Categorias category, Guid Id) 
         {
+
         if (Id != category.ID) throw new Exception();
 
         var res = await _context.Categorias.Where(w => w.ID == Id).FirstOrDefaultAsync();
@@ -119,6 +127,8 @@ public class CategoriasController : Controller
         res.Descripcion = category.Descripcion;
         res.Habilitado = category.Habilitado;
         await _context.SaveChangesAsync();
+
+        await _cache.DeleteDataAsync<List<Categorias>>($"Categoria:{Id}");
 
         return Ok(res);
 

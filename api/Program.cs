@@ -4,9 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+using StackExchange.Redis;
 
 /* ========= Servicios e Inyecciones  ==================== */
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 Console.WriteLine("******************Configurando Servicios *******************");
 
 // Add services to the container.
@@ -15,8 +17,20 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//MS SQL
 builder.Services.AddTransient<IAppDBContext, AppDBContext>();
 builder.Services.AddDbContext<AppDBContext>(o => o.UseSqlServer("Server=172.0.0.161,14334;Database=API;user id=sa;password=M1sterPassw0rd!;Encrypt=true;TrustServerCertificate=true"));
+
+//Redis
+
+string endpoint = configuration.GetSection("Cache")!.GetValue("Endpoint",string.Empty)!;
+builder.Services.AddSingleton<IConnectionMultiplexer>(o => ConnectionMultiplexer.Connect(new ConfigurationOptions() { 
+ EndPoints = { endpoint }
+}));
+builder.Services.AddSingleton<ICacheService, RedisContext>();
+
+
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
